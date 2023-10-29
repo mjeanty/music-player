@@ -4,7 +4,7 @@ const musicContainer  = document.getElementById('music-container'),
     nextBtn  = document.getElementById('next'),
     audio  = document.getElementById('audio'),
     progress  = document.getElementById('progress'),
-    proessContainer  = document.getElementById('progress-container'),
+    progressContainer  = document.getElementById('progress-container'),
     title  = document.getElementById('title'),
     cover  = document.getElementById('cover')
 
@@ -41,12 +41,50 @@ function pauseSong() {
     audio.pause()
 }
 
+//prevous song
+function prevSong(){
+    songIndex--
+    if(songIndex < 0) {
+    songIndex = songs.length -1
+
+    }
+    loadSong(songs[songIndex])
+    playSong()
+}
+//next song
+function nextSong(){
+    songIndex ++
+    if(songIndex > songs.length - 1) {
+    songIndex = 0
+
+    }
+    loadSong(songs[songIndex])
+    playSong()
+}
 
 //Update song detils
 function loadSong(song){
     title.innerText = song;
     audio.src =`music/${song}.mp3`
     cover.src =`images/${song}.jpg`
+}
+
+
+//update progress
+function updateProgress(e){
+    const { duration, currentTime} = e.srcElement
+    const progressPercent = (currentTime / duration) * 100
+    progress.style.width =`${progressPercent}%`
+   
+    
+}
+
+//setprogress
+function setProgress(e){
+    const width = this.clientWidth
+    const clickX = e.offsetX
+    const duration = audio.duration
+    audio.currentTime =(clickX / width) * duration
 }
 
 
@@ -60,3 +98,15 @@ playBtn.addEventListener('click', ()=>{
         playSong()
     }
 })
+
+//change songs
+prevBtn.addEventListener('click', prevSong )
+nextBtn.addEventListener('click', nextSong )
+
+
+// update the progress
+audio.addEventListener('timeupdate', updateProgress)
+progressContainer.addEventListener('click', setProgress)
+
+//song ends
+audio.addEventListener('ended', nextSong)
